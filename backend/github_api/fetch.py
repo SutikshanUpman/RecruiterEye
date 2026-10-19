@@ -22,8 +22,17 @@ def get_readme(username, repo_name):
     except GithubException:
         return ""
 
+def get_structure(username, repo_name):
+    """Returns a list of all file paths in a repo, e.g. ["backend/main.py", ...]."""
+    try:
+        repo = gh.get_repo(f"{username}/{repo_name}")
+        tree = repo.get_git_tree(repo.default_branch, recursive=True)
+        return [item.path for item in tree.tree if item.type == "blob"]
+    except GithubException:
+        return []
+
 
 if __name__ == "__main__":
     for r in get_repos("SutikshanUpman"):
-        text = get_readme("SutikshanUpman", r["name"])
-        print(r["name"], "->", len(text), "characters")
+        files = get_structure("SutikshanUpman", r["name"])
+        print(r["name"], "->", len(files), "files")
