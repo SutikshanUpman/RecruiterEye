@@ -1,9 +1,11 @@
-from github import Github, Auth
+from github import Github, Auth, GithubException
 from backend.core.config import GITHUB_TOKEN
 
 gh = Github(auth=Auth.Token(GITHUB_TOKEN))
 
+
 def get_repos(username):
+    """This function takes username and GitHubToken to fetch repos of that user with url"""
     user = gh.get_user(username)
     repos = []
     for repo in user.get_repos():
@@ -11,10 +13,17 @@ def get_repos(username):
             repos.append({"name": repo.name, "url": repo.html_url})
     return repos
 
+
+def get_readme(username, repo_name):
+    """Returns the README text of a repo, or "" if it has none."""
+    try:
+        repo = gh.get_repo(f"{username}/{repo_name}")
+        return repo.get_readme().decoded_content.decode("utf-8")
+    except GithubException:
+        return ""
+
+
 if __name__ == "__main__":
     for r in get_repos("SutikshanUpman"):
-        print(r)
-
-"""
-This function takes username and GitHubToken to fetch repos of that user with url
-"""
+        text = get_readme("SutikshanUpman", r["name"])
+        print(r["name"], "->", len(text), "characters")
