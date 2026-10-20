@@ -31,8 +31,22 @@ def get_structure(username, repo_name):
     except GithubException:
         return []
 
+def get_commits(username, repo_name, limit=30):
+    """Returns the latest commits as [{"message": ..., "date": ...}]."""
+    try:
+        repo = gh.get_repo(f"{username}/{repo_name}")
+        commits = []
+        for c in repo.get_commits()[:limit]:
+            commits.append({
+                "message": c.commit.message.split("\n")[0],
+                "date": c.commit.author.date.isoformat(),
+            })
+        return commits
+    except GithubException:
+        return []
 
 if __name__ == "__main__":
     for r in get_repos("SutikshanUpman"):
-        files = get_structure("SutikshanUpman", r["name"])
-        print(r["name"], "->", len(files), "files")
+        commits = get_commits("SutikshanUpman", r["name"])
+        print(r["name"], "->", len(commits), "commits")
+    print(get_commits("SutikshanUpman", "recruitereye")[:3])
