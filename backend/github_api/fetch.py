@@ -22,6 +22,7 @@ def get_readme(username, repo_name):
     except GithubException:
         return ""
 
+
 def get_structure(username, repo_name):
     """Returns a list of all file paths in a repo, e.g. ["backend/main.py", ...]."""
     try:
@@ -30,6 +31,7 @@ def get_structure(username, repo_name):
         return [item.path for item in tree.tree if item.type == "blob"]
     except GithubException:
         return []
+
 
 def get_commits(username, repo_name, limit=30):
     """Returns the latest commits as [{"message": ..., "date": ...}]."""
@@ -45,8 +47,22 @@ def get_commits(username, repo_name, limit=30):
     except GithubException:
         return []
 
+
+def fetch_profile(username):
+    """Returns one dict per repo, with readme, structure and commits filled in."""
+    repos = get_repos(username)
+    for repo in repos:
+        repo["readme"] = get_readme(username, repo["name"])
+        repo["structure"] = get_structure(username, repo["name"])
+        repo["commits"] = get_commits(username, repo["name"])
+    return repos
+
+
+import time
+
 if __name__ == "__main__":
-    for r in get_repos("SutikshanUpman"):
-        commits = get_commits("SutikshanUpman", r["name"])
-        print(r["name"], "->", len(commits), "commits")
-    print(get_commits("SutikshanUpman", "recruitereye")[:3])
+    start = time.time()
+    data = fetch_profile("SutikshanUpman")
+    for r in data:
+        print(r["name"], "|", len(r["readme"]), "chars |", len(r["structure"]), "files |", len(r["commits"]), "commits")
+    print(len(data), "repos in", round(time.time() - start), "seconds")
