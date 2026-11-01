@@ -46,7 +46,7 @@ recruitereye/
 
 - [x] Phase 0: project skeleton, `/health` endpoint
 - [x] Phase 1: GitHub fetch
-- [ ] Phase 2: LLM helper and keyword generation
+- [x] Phase 2: LLM helper and keyword generation
 - [ ] Phase 3: filter, score, review behind one endpoint
 - [ ] Phase 4: LangGraph
 - [ ] Phase 5: database and streaming
