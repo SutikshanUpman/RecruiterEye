@@ -1,3 +1,5 @@
+import time
+import requests
 from github import Github, Auth, GithubException
 from backend.core.config import GITHUB_TOKEN
 
@@ -12,6 +14,31 @@ def get_repos(username):
         if not repo.fork:
             repos.append({"name": repo.name, "url": repo.html_url})
     return repos
+
+
+def get_pinned(username):
+    """Returns the user's pinned repos as [{"name": ..., "url": ...}]."""
+    query = """
+    query($login: String!) {
+      user(login: $login) {
+        pinnedItems(first: 6, types: REPOSITORY) {
+          nodes { ... on Repository { name url owner { login } } }
+        }
+      }
+    }
+    """
+    response = requests.post(
+        "https://api.github.com/graphql",
+        json={"query": query, "variables": {"login": username}},
+        headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
+        timeout=15,
+    )
+    response.raise_for_status()
+    data = response.json()
+    if "errors" in data:
+        return []
+    nodes = data["data"]["user"]["pinnedItems"]["nodes"]
+    return [{"name": n["name"], "url": n["url"]} for n in nodes if n["owner"]["login"] == username]
 
 
 def get_readme(username, repo_name):
@@ -50,15 +77,13 @@ def get_commits(username, repo_name, limit=30):
 
 def fetch_profile(username):
     """Returns one dict per repo, with readme, structure and commits filled in."""
-    repos = get_repos(username)
+    repos = get_pinned(username) or get_repos(username)
     for repo in repos:
         repo["readme"] = get_readme(username, repo["name"])
         repo["structure"] = get_structure(username, repo["name"])
         repo["commits"] = get_commits(username, repo["name"])
     return repos
 
-
-import time
 
 if __name__ == "__main__":
     start = time.time()
