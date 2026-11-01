@@ -14,7 +14,7 @@ I build projects for my resume, but I never know what a recruiter actually sees.
 
 The idea is a funnel: cheap steps first, expensive steps last, on fewer repos.
 
-1. **Fetch** repos, READMEs, file structure and commits from the GitHub API.
+1. **Fetch** your pinned repos (what a recruiter sees first), falling back to all repos if none are pinned. For each: README, file structure and commits from the GitHub API.
 2. **Keywords:** the user uploads a job description, or just types a job role. A small LLM turns it into skill keywords.
 3. **Filter:** TF-IDF ranks repos against those keywords and keeps the best few.
 4. **Score:** a small LLM rates each repo on commit history, structure and README.
@@ -53,6 +53,11 @@ recruitereye/
 - [ ] Phase 6: RAG with cited guidelines
 - [ ] Phase 7: chatbot for follow-up questions
 - [ ] Phase 8: web UI, Razorpay, evaluation, Docker
+
+## Future (v2)
+
+- **Resume input:** upload a resume, extract the GitHub links in it, and review those repos too. Repos linked in the resume get a priority boost, since they're the ones the candidate chose to show.
+- **Better filter:** replace TF-IDF with a smarter relevance method (for example, embeddings), since word overlap alone is a rough signal.
 
 ## Setup
 
