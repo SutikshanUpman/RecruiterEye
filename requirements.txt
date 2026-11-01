@@ -1,4 +1,4 @@
 fastapi
 uvicorn
 pydantic-settingsPyGithub
-python-dotenv
+python-dotenvgroq

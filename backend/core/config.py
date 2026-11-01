@@ -9,3 +9,5 @@ load_dotenv() opens your .env file and loads each line
 (GITHUB_TOKEN=...) into the program’s environment variables.
 """
 
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
