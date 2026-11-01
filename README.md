@@ -15,14 +15,14 @@ I build projects for my resume, but I never know what a recruiter actually sees.
 The idea is a funnel: cheap steps first, expensive steps last, on fewer repos.
 
 1. **Fetch** repos, READMEs, file structure and commits from the GitHub API.
-2. **Keywords:** a small LLM turns the job description (or role name) into skill keywords.
+2. **Keywords:** the user uploads a job description, or just types a job role. A small LLM turns it into skill keywords.
 3. **Filter:** TF-IDF ranks repos against those keywords and keeps the best few.
 4. **Score:** a small LLM rates each repo on commit history, structure and README.
 5. **Review:** a stronger LLM reads the code of the top 1-2 repos and writes the final review.
 
 ## Tech
 
-Python, FastAPI, Groq (Llama 3.x), scikit-learn (TF-IDF), PyGithub.
+Python, FastAPI, Groq (gpt-oss models), scikit-learn (TF-IDF), PyGithub.
 Planned: LangGraph, PostgreSQL, ChromaDB (RAG), Razorpay (Pro tier), Docker.
 
 ## Project structure
@@ -44,8 +44,8 @@ recruitereye/
 
 ## Roadmap
 
-- [ ] Phase 0: project skeleton, `/health` endpoint
-- [ ] Phase 1: GitHub fetch
+- [x] Phase 0: project skeleton, `/health` endpoint
+- [x] Phase 1: GitHub fetch
 - [ ] Phase 2: LLM helper and keyword generation
 - [ ] Phase 3: filter, score, review behind one endpoint
 - [ ] Phase 4: LangGraph
@@ -57,8 +57,10 @@ recruitereye/
 ## Setup
 
 ```bash
-cp .env.example .env   # add your GitHub token and Groq key
+conda create -n recruitereye python=3.10 -y
+conda activate recruitereye
 pip install -r requirements.txt
+cp .env.example .env   # add your GitHub token and Groq key
 uvicorn backend.main:app --reload
 ```
 
