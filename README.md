@@ -58,6 +58,12 @@ recruitereye/
 
 - **Resume input:** upload a resume, extract the GitHub links in it, and review those repos too. Repos linked in the resume get a priority boost, since they're the ones the candidate chose to show.
 - **Better filter:** replace TF-IDF with a smarter relevance method (for example, embeddings), since word overlap alone is a rough signal.
+- **Smarter use of rate limits:** the free tier allows 30 requests/min and 8K tokens/min per model.
+  - Trim inputs before sending: cap README length, send only key files, skip lockfiles and binaries.
+  - Cache results (for example, keyword output per job role, repo scores per commit) so repeat runs make zero calls.
+  - Retry with backoff on rate-limit errors (wait, then try again, longer each time).
+  - Pick the model by task: 20b for cheap scoring, 120b only for the final review.
+  - Track tokens used per run and spread calls out instead of sending them all at once.
 
 ## Setup
 
