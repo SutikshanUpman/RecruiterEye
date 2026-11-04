@@ -40,8 +40,21 @@ def score_repo(repo):
         return {}
 
 
+def score_all(repos):
+    """Adds scores and a total to each repo, returns repos sorted best first."""
+    for repo in repos:
+        scores = score_repo(repo)
+        repo["scores"] = scores
+        repo["total"] = sum(v for v in scores.values() if isinstance(v, (int, float)))
+    return sorted(repos, key=lambda r: r["total"], reverse=True)
+
+
 if __name__ == "__main__":
     from backend.github_api.fetch import fetch_profile
+    from backend.agent.keywords import get_keywords
+    from backend.agent.filter import filter_repos
 
-    for r in fetch_profile("SutikshanUpman")[:2]:
-        print(r["name"], score_repo(r))
+    repos = fetch_profile("SutikshanUpman")
+    keywords = get_keywords("AI Engineer working with Python, FastAPI, RAG, LLMs, Docker")
+    for r in score_all(filter_repos(repos, keywords)):
+        print(r["total"], r["name"], r["scores"])
