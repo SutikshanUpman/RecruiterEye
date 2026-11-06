@@ -75,6 +75,15 @@ def get_commits(username, repo_name, limit=30):
         return []
 
 
+def get_file(username, repo_name, path, limit=2000):
+    """Returns the first `limit` characters of one file, or "" if it can't be read."""
+    try:
+        repo = gh.get_repo(f"{username}/{repo_name}")
+        return repo.get_contents(path).decoded_content.decode("utf-8")[:limit]
+    except (GithubException, UnicodeDecodeError):
+        return ""
+    
+
 def fetch_profile(username):
     """Returns one dict per repo, with readme, structure and commits filled in."""
     repos = get_pinned(username) or get_repos(username)
