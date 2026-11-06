@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-def filter_repos(repos, keywords, top_n=4):
+def filter_repos(repos: list[dict], keywords: list[str], top_n: int = 4) -> list[dict]:
     """Ranks repos by keyword relevance (TF-IDF) and returns the top_n."""
     if not repos or not keywords:
         return repos[:top_n]

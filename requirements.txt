@@ -3,3 +3,4 @@ uvicorn
 pydantic-settingsPyGithub
 python-dotenvgroq
 sciket-learn
+pytest

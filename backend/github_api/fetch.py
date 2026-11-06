@@ -6,7 +6,7 @@ from backend.core.config import GITHUB_TOKEN
 gh = Github(auth=Auth.Token(GITHUB_TOKEN))
 
 
-def get_repos(username):
+def get_repos(username: str) -> list[dict]:
     """This function takes username and GitHubToken to fetch repos of that user with url"""
     user = gh.get_user(username)
     repos = []
@@ -16,7 +16,7 @@ def get_repos(username):
     return repos
 
 
-def get_pinned(username):
+def get_pinned(username: str) -> list[dict]:
     """Returns the user's pinned repos as [{"name": ..., "url": ...}]."""
     query = """
     query($login: String!) {
@@ -41,7 +41,7 @@ def get_pinned(username):
     return [{"name": n["name"], "url": n["url"]} for n in nodes if n["owner"]["login"] == username]
 
 
-def get_readme(username, repo_name):
+def get_readme(username: str, repo_name: str) -> str:
     """Returns the README text of a repo, or "" if it has none."""
     try:
         repo = gh.get_repo(f"{username}/{repo_name}")
@@ -50,7 +50,7 @@ def get_readme(username, repo_name):
         return ""
 
 
-def get_structure(username, repo_name):
+def get_structure(username: str, repo_name: str) -> list[str]:
     """Returns a list of all file paths in a repo, e.g. ["backend/main.py", ...]."""
     try:
         repo = gh.get_repo(f"{username}/{repo_name}")
@@ -60,7 +60,7 @@ def get_structure(username, repo_name):
         return []
 
 
-def get_commits(username, repo_name, limit=30):
+def get_commits(username: str, repo_name: str, limit: int = 30) -> list[dict]:
     """Returns the latest commits as [{"message": ..., "date": ...}]."""
     try:
         repo = gh.get_repo(f"{username}/{repo_name}")
@@ -75,7 +75,7 @@ def get_commits(username, repo_name, limit=30):
         return []
 
 
-def get_file(username, repo_name, path, limit=2000):
+def get_file(username: str, repo_name: str, path: str, limit: int = 2000) -> str:
     """Returns the first `limit` characters of one file, or "" if it can't be read."""
     try:
         repo = gh.get_repo(f"{username}/{repo_name}")
@@ -84,7 +84,7 @@ def get_file(username, repo_name, path, limit=2000):
         return ""
     
 
-def fetch_profile(username):
+def fetch_profile(username: str) -> list[dict]:
     """Returns one dict per repo, with readme, structure and commits filled in."""
     repos = get_pinned(username) or get_repos(username)
     for repo in repos:

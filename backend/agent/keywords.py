@@ -1,7 +1,7 @@
 from backend.agent.llm import ask_llm
 
 
-def get_keywords(job_input):
+def get_keywords(job_input: str) -> list[str]:
     """Turns a job description or a job role name into a list of skill keywords."""
     job_input = job_input[:3000]
     prompt = (

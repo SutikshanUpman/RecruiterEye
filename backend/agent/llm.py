@@ -7,7 +7,7 @@ CHEAP_MODEL = "openai/gpt-oss-20b"
 HEAVY_MODEL = "openai/gpt-oss-120b"
 
 
-def ask_llm(prompt, model=CHEAP_MODEL, temperature=0):
+def ask_llm(prompt: str, model: str = CHEAP_MODEL, temperature: float = 0) -> str | None:
     """Sends a prompt to Groq and returns the reply as plain text."""
     response = client.chat.completions.create(
         model=model,
