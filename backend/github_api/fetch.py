@@ -38,7 +38,11 @@ def get_pinned(username: str) -> list[dict]:
     if "errors" in data:
         return []
     nodes = data["data"]["user"]["pinnedItems"]["nodes"]
-    return [{"name": n["name"], "url": n["url"]} for n in nodes if n["owner"]["login"] == username]
+    repos = []
+    for node in nodes:
+        if node["owner"]["login"] == username:
+            repos.append({"name": node["name"], "url": node["url"]})
+    return repos
 
 
 def get_readme(username: str, repo_name: str) -> str:

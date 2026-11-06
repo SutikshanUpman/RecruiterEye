@@ -1,6 +1,8 @@
 fastapi
 uvicorn
-pydantic-settingsPyGithub
-python-dotenvgroq
-sciket-learn
+pydantic-settings
+PyGithub
+python-dotenv
+groq
+scikit-learn
 pytest

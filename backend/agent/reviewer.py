@@ -11,14 +11,22 @@ def pick_top(repos: list[dict], n: int = 2) -> list[dict]:
     top_rel = max((r.get("relevance", 0) for r in repos), default=0) or 1
 
     def combined(r: dict) -> float:
-        return 0.6 * r.get("total", 0) / 30 + 0.4 * r.get("relevance", 0) / top_rel
+        quality = 0.6 * r.get("total", 0) / 30
+        relevance = 0.4 * r.get("relevance", 0) / top_rel
+        return quality + relevance
 
     return sorted(repos, key=combined, reverse=True)[:n]
 
 
 def pick_code_files(paths: list[str], n: int = 3) -> list[str]:
     """Picks up to n source files, shallow ones first."""
-    code = [p for p in paths if p.endswith(CODE_EXT) and not any(s in p.lower() for s in SKIP)]
+    code = []
+    for path in paths:
+        if not path.endswith(CODE_EXT):
+            continue
+        if any(word in path.lower() for word in SKIP):
+            continue
+        code.append(path)
     code.sort(key=lambda p: p.count("/"))
     return code[:n]
 
@@ -31,7 +39,11 @@ def readme_headings(readme: str) -> list[str]:
 def review_repo(username: str, repo: dict) -> str:
     """Asks the heavy LLM for a recruiter-style review of one repo."""
     files = pick_code_files(repo["structure"])
-    code = "\n\n".join(f"--- {p} ---\n{get_file(username, repo['name'], p)}" for p in files)
+    sections = []
+    for path in files:
+        content = get_file(username, repo["name"], path)
+        sections.append(f"--- {path} ---\n{content}")
+    code = "\n\n".join(sections)
     prompt = (
         "You are a senior technical recruiter reviewing a candidate's GitHub repo "
         "for an AI engineering role. Be honest and specific, no flattery.\n"

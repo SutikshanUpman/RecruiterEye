@@ -15,10 +15,12 @@ I build projects for my resume, but I never know what a recruiter actually sees.
 The idea is a funnel: cheap steps first, expensive steps last, on fewer repos.
 
 1. **Fetch** your pinned repos (what a recruiter sees first), falling back to all repos if none are pinned. For each: README, file structure and commits from the GitHub API.
-2. **Keywords:** the user uploads a job description, or just types a job role. A small LLM turns it into skill keywords.
+2. **Keywords:** a small LLM turns a job description or job role into skill keywords.
 3. **Filter:** TF-IDF ranks repos against those keywords and keeps the best few.
 4. **Score:** a small LLM rates each repo on commit history, structure and README.
 5. **Review:** a stronger LLM reads the code of the top 1-2 repos and writes the final review.
+
+The pipeline currently runs through Python modules. The reviewer example selects two repos and deeply reviews only the first. A combined API endpoint and web UI are still pending.
 
 ## Tech
 
@@ -37,7 +39,7 @@ recruitereye/
 │   ├── routers/         # API endpoints
 │   ├── db/              # later
 │   └── rag/             # later
-├── eval/
+├── tests/              # pure function tests
 ├── .env.example
 └── requirements.txt
 ```
@@ -47,7 +49,7 @@ recruitereye/
 - [x] Phase 0: project skeleton, `/health` endpoint
 - [x] Phase 1: GitHub fetch
 - [x] Phase 2: LLM helper and keyword generation
-- [ ] Phase 3: filter, score, review behind one endpoint
+- [ ] Phase 3: filter, score, review behind one endpoint (individual modules implemented; endpoint pending)
 - [ ] Phase 4: LangGraph
 - [ ] Phase 5: database and streaming
 - [ ] Phase 6: RAG with cited guidelines
