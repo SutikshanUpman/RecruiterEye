@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from backend.routers.review import router as review_router
 
 app = FastAPI()
+app.include_router(review_router)
 
 @app.get("/health")
 def health():

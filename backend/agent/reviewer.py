@@ -36,7 +36,7 @@ def readme_headings(readme: str) -> list[str]:
     return [line.strip() for line in readme.splitlines() if line.startswith("#")][:15]
 
 
-def review_repo(username: str, repo: dict) -> str:
+def review_repo(username: str, repo: dict, job_input: str) -> str:
     """Asks the heavy LLM for a recruiter-style review of one repo."""
     files = pick_code_files(repo["structure"])
     sections = []
@@ -46,7 +46,7 @@ def review_repo(username: str, repo: dict) -> str:
     code = "\n\n".join(sections)
     prompt = (
         "You are a senior technical recruiter reviewing a candidate's GitHub repo "
-        "for an AI engineering role. Be honest and specific, no flattery.\n"
+        "for the supplied job description or role. Be honest and specific, no flattery.\n"
         "Write under 250 words in exactly three parts:\n"
         "1. What a recruiter would notice first\n"
         "2. Red flags\n"
@@ -56,6 +56,7 @@ def review_repo(username: str, repo: dict) -> str:
         "If unsure, say it is not visible. "
         "Comment on the code quality if code is shown. "
         "If no code is shown, say the review is based on README and structure only.\n\n"
+        f"Job description or role: {job_input[:3000]}\n\n"
         f"Repo: {repo['name']}\n"
         f"Scores (1-10): {repo.get('scores', {})}\n"
         f"Commits: {summarize_commits(repo['commits'])}\n"
@@ -74,7 +75,8 @@ if __name__ == "__main__":
     from backend.agent.scorer import score_all
 
     repos = fetch_profile("SutikshanUpman")
-    keywords = get_keywords("AI Engineer working with Python, FastAPI, RAG, LLMs, Docker")
+    job_input = "AI Engineer working with Python, FastAPI, RAG, LLMs, Docker"
+    keywords = get_keywords(job_input)
     best = pick_top(score_all(filter_repos(repos, keywords)))
     print("picked:", [r["name"] for r in best])
-    print(review_repo("SutikshanUpman", best[0]))
+    print(review_repo("SutikshanUpman", best[0], job_input))
