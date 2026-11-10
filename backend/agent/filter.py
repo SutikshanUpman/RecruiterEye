@@ -11,6 +11,11 @@ def filter_repos(repos: list[dict], keywords: list[str], top_n: int = 4) -> list
     query = " ".join(keywords)
 
     vectorizer = TfidfVectorizer(stop_words="english")
+    analyze = vectorizer.build_analyzer()
+    if not any(analyze(text) for text in texts + [query]):
+        for repo in repos[:top_n]:
+            repo["relevance"] = 0.0
+        return repos[:top_n]
     matrix = vectorizer.fit_transform(texts + [query])
     scores = cosine_similarity(matrix[-1], matrix[:-1])[0]
 

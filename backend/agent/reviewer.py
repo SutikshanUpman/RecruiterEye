@@ -42,7 +42,8 @@ def review_repo(username: str, repo: dict, job_input: str) -> str:
     sections = []
     for path in files:
         content = get_file(username, repo["name"], path)
-        sections.append(f"--- {path} ---\n{content}")
+        if content.strip():
+            sections.append(f"--- {path} ---\n{content}")
     code = "\n\n".join(sections)
     prompt = (
         "You are a senior technical recruiter reviewing a candidate's GitHub repo "

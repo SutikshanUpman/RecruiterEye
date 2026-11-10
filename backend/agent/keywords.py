@@ -1,4 +1,5 @@
 from backend.agent.llm import ask_llm
+from backend.core.errors import ReviewError
 
 
 def get_keywords(job_input: str) -> list[str]:
@@ -13,7 +14,10 @@ def get_keywords(job_input: str) -> list[str]:
     )
     reply = ask_llm(prompt)
     keywords = [k.strip().lower() for k in reply.replace("\n", ",").split(",")]
-    return [k for k in keywords if k]
+    keywords = list(dict.fromkeys(k for k in keywords if k))
+    if not keywords or len(keywords) > 15 or any(len(k) > 100 for k in keywords):
+        raise ReviewError("The model returned invalid skill keywords. Please try again.")
+    return keywords
 
 
 if __name__ == "__main__":

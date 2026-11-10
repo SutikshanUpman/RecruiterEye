@@ -3,7 +3,7 @@ import pytest
 from backend.agent.reviewer import readme_headings
 
 
-# These fixtures import the real modules; their API clients may require keys.
+# Service clients are initialized only when used.
 @pytest.fixture
 def scorer():
     from backend.agent import scorer

@@ -1,5 +1,6 @@
 import json
 from backend.agent.llm import ask_llm
+from backend.core.errors import ReviewError
 
 JUNK = ("__pycache__", ".ipynb_checkpoints", "node_modules", ".DS_Store")
 
@@ -35,9 +36,17 @@ def score_repo(repo: dict) -> dict:
     reply = ask_llm(prompt)
     start, end = reply.find("{"), reply.rfind("}") + 1
     try:
-        return json.loads(reply[start:end])
-    except json.JSONDecodeError:
-        return {}
+        scores = json.loads(reply[start:end])
+    except json.JSONDecodeError as exc:
+        raise ReviewError("The model returned invalid repository scores. Please try again.") from exc
+    expected = {"commit_history", "structure", "readme"}
+    if (
+        not isinstance(scores, dict)
+        or set(scores) != expected
+        or any(type(value) is not int or not 1 <= value <= 10 for value in scores.values())
+    ):
+        raise ReviewError("The model returned invalid repository scores. Please try again.")
+    return scores
 
 
 def score_all(repos: list[dict]) -> list[dict]:

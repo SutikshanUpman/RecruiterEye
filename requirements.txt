@@ -6,3 +6,5 @@ python-dotenv
 groq
 scikit-learn
 pytest
+httpx
+requests
