@@ -22,6 +22,40 @@ The idea is a funnel: cheap steps first, expensive steps last, on fewer repos.
 
 The pipeline is available through `POST /review`: it scores up to four relevant repos and deeply reviews up to two using the supplied job context. The standalone reviewer example reviews only the first selected repo. The web UI is still pending.
 
+## Architecture flow
+
+The current Phase 3 backend runs the pipeline sequentially within one request.
+
+```mermaid
+flowchart TD
+    Input["GitHub username + job description or role"] --> API["FastAPI: POST /review"]
+    API --> Validate{"Valid input?"}
+    Validate -->|No| Invalid["422: validation error"]
+    Validate -->|Yes| Fetch["GitHub API: fetch owned pinned repos<br/>Fall back to non-fork repos if none qualify<br/>Read README, file paths, and latest commits"]
+    Fetch --> HasRepos{"Any eligible repos?"}
+    HasRepos -->|No| Empty["200: empty results<br/>No LLM calls"]
+    HasRepos -->|Yes| Keywords["Groq: gpt-oss-20b<br/>Extract job skill keywords"]
+    Keywords --> Filter["TF-IDF + cosine similarity<br/>Keep up to 4 relevant repos"]
+    Filter --> Score["Groq: gpt-oss-20b<br/>Score commits, structure, and README<br/>Validate each rating: integer from 1 to 10"]
+    Score --> Select["Select up to 2 repos<br/>60% quality + 40% normalized relevance"]
+    Select --> Code["GitHub API: fetch up to 3 source files per repo<br/>Up to 2000 characters per file"]
+    Code --> Review["Groq: gpt-oss-120b<br/>Review each repo using code, metadata, and job context"]
+    Review --> Output["200: structured JSON<br/>Keywords, counts, scores, relevance, and reviews"]
+
+    Fetch -.-> Errors["Expected pipeline failures<br/>404 / 502 / 503 / 504 with a detail message"]
+    Keywords -.-> Errors
+    Score -.-> Errors
+    Code -.-> Errors
+    Review -.-> Errors
+```
+
+`backend/routers/review.py` coordinates the pipeline. `backend/github_api/fetch.py`
+handles GitHub data, while `backend/agent/` contains keyword extraction, filtering,
+scoring, and reviewing. The LLM stages share `backend/agent/llm.py`.
+Dotted arrows show failure paths; an upstream failure ends the request without
+returning partial reviews. LangGraph, persistence, streaming, and the web UI are
+planned for later phases.
+
 ## Tech
 
 Python, FastAPI, Groq (gpt-oss models), scikit-learn (TF-IDF), PyGithub.
