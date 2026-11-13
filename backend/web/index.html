@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="See your GitHub the way a recruiter does. Review your projects against your next role.">
+    <title>RecruiterEye — a fresh look at your GitHub</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/form.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="RecruiterEye home">
+        <span class="brand-mark" aria-hidden="true">r.</span>
+        RecruiterEye
+      </a>
+      <a class="header-link" href="#how-it-works">How it works</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">A fresh perspective on your projects</p>
+        <h1 id="page-title">See your GitHub through<br class="desktop-break"> a recruiter's eyes.</h1>
+        <p class="intro">Your projects tell a story. Find out how they fit your next role,<br class="desktop-break"> what stands out, and what you can improve.</p>
+      </section>
+
+      <section class="review-section" aria-labelledby="form-title">
+        <div class="section-heading">
+          <h2 id="form-title">Start with your profile</h2>
+          <p>A GitHub username and a little context are all you need.</p>
+        </div>
+        <form id="review-form" novalidate>
+          <div class="field">
+            <label for="username">GitHub username <span class="required">(required)</span></label>
+            <input id="username" name="username" type="text" required maxlength="39" pattern="[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*" placeholder="e.g. octocat" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="username-hint username-error">
+            <p id="username-hint" class="hint">Just your username, without the github.com link.</p>
+            <p id="username-error" class="error" hidden></p>
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <label for="job-input">Your next role <span class="required">(required)</span></label>
+              <span id="job-count" class="counter" aria-hidden="true">0 / 3000</span>
+            </div>
+            <textarea id="job-input" name="job_input" rows="5" required maxlength="3000" placeholder="e.g. Backend developer using Python and FastAPI, or paste a job description here…" aria-describedby="job-hint job-error"></textarea>
+            <p id="job-hint" class="hint">A job title or a full job description. Up to 3000 characters.</p>
+            <p id="job-error" class="error" hidden></p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit">Review my GitHub <span aria-hidden="true">→</span></button>
+            <p class="preview-note">Form preview · Review generation is coming soon.</p>
+          </div>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="how-it-works" class="how-section" aria-labelledby="how-title">
+        <h2 id="how-title">A second pair of eyes, in three steps.</h2>
+        <div class="steps">
+          <article><span class="step-number">01</span><h3>Share your direction</h3><p>Add your profile and the role you're aiming for.</p></article>
+          <article><span class="step-number">02</span><h3>Find the strongest fit</h3><p>Your repositories are ranked for relevance and scored on their presentation.</p></article>
+          <article><span class="step-number">03</span><h3>Know what to improve</h3><p>Get feedback on selected projects, with practical next steps.</p></article>
+        </div>
+      </section>
+      <aside class="sampling-note">A starting point for improvement. Reviews use a limited sample of repository content; check findings against your code.</aside>
+    </main>
+
+    <footer><span>RecruiterEye</span><span>Built for your next opportunity.</span></footer>
+  </body>
+</html>
